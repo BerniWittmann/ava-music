@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes genre-overlay {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  72% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes genre-text {
+  0% { opacity: 0; transform: scale(0.55); filter: blur(10px); }
+  22% { opacity: 1; transform: scale(1.06); filter: blur(0px); }
+  35% { transform: scale(1); }
+  68% { opacity: 1; transform: scale(1); filter: blur(0px); }
+  100% { opacity: 0; transform: scale(1.18); filter: blur(6px); }
+}
+
+@keyframes genre-label {
+  0% { opacity: 0; transform: translateY(6px); }
+  25% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.genre-reveal-overlay {
+  animation: genre-overlay 1500ms ease-in-out forwards;
+}
+
+.genre-reveal-text {
+  animation: genre-text 1500ms ease-in-out forwards;
+}
+
+.genre-reveal-label {
+  animation: genre-label 1500ms ease-in-out forwards;
+}
+
 :root {
   color-scheme: light;
   --ava-snow: #f6fbff;

@@ -77,6 +77,7 @@ function pickRandomGenre(genres: SpotifyGenre[]): SpotifyGenre {
 
 export function GenrePicker() {
   const [lastGenre, setLastGenre] = useState<SpotifyGenre | null>(null);
+  const [revealedGenre, setRevealedGenre] = useState<SpotifyGenre | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [selectedGenreIds, setSelectedGenreIds] = useState<string[]>(
     SPOTIFY_GENRES.filter((genre) => genre.selectedByDefault).map((genre) => genre.id)
@@ -116,16 +117,22 @@ export function GenrePicker() {
     setSelectedGenreIds([]);
   };
 
+  const REVEAL_DURATION_MS = 1500;
+
   const onPick = () => {
-    if (!hasActiveGenres) {
+    if (!hasActiveGenres || revealedGenre) {
       return;
     }
 
     const genre = pickRandomGenre(activeGenres);
     setLastGenre(genre);
+    setRevealedGenre(genre);
 
-    const spotifyUrl = `https://open.spotify.com/genre/${encodeURIComponent(genre.id)}`;
-    window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
+    setTimeout(() => {
+      setRevealedGenre(null);
+      const spotifyUrl = `https://open.spotify.com/genre/${encodeURIComponent(genre.id)}`;
+      window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
+    }, REVEAL_DURATION_MS);
   };
 
   return (
@@ -189,7 +196,21 @@ export function GenrePicker() {
           </svg>
         </button>
 
-        {isSettingsOpen ? (
+        {revealedGenre ? (
+        <div className="genre-reveal-overlay fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" />
+          <div className="genre-reveal-text relative px-8 text-center">
+            <p className="genre-reveal-label text-xs font-semibold uppercase tracking-[0.25em] text-[var(--ava-ice)]">
+              Opening in Spotify
+            </p>
+            <p className="mt-3 text-5xl font-black uppercase tracking-tight text-[var(--ava-snow)] sm:text-6xl">
+              {revealedGenre.name}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      {isSettingsOpen ? (
           <div
             id="genre-settings"
             className="absolute bottom-14 right-0 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-[var(--ava-ice)]/40 bg-[color:rgb(8_15_26_/_97%)] p-4 shadow-[0_12px_40px_rgba(4,10,18,0.8)]"
