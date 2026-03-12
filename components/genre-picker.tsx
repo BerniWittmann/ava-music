@@ -131,7 +131,11 @@ export function GenrePicker() {
     setTimeout(() => {
       setRevealedGenre(null);
       const spotifyUrl = `https://open.spotify.com/genre/${encodeURIComponent(genre.id)}`;
-      window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
+      const newWindow = window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
+      // iOS PWA blocks window.open — fall back to navigation in same tab
+      if (!newWindow) {
+        window.location.href = spotifyUrl;
+      }
     }, REVEAL_DURATION_MS);
   };
 
