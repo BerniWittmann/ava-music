@@ -130,19 +130,14 @@ export function GenrePicker() {
 
     setTimeout(() => {
       setRevealedGenre(null);
-      const spotifyWebUrl = `https://open.spotify.com/genre/${encodeURIComponent(genre.id)}`;
-      const spotifyAppUrl = `spotify:genre:${genre.id}`;
+      const spotifyUrl = `https://open.spotify.com/genre/${encodeURIComponent(genre.id)}`;
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       if (isIOS) {
-        // Use spotify: URI scheme to open the app; fall back to web URL after 1.5s if not installed
-        window.location.href = spotifyAppUrl;
-        setTimeout(() => {
-          window.location.href = spotifyWebUrl;
-        }, 1500);
+        window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
       } else {
-        const newWindow = window.open(spotifyWebUrl, '_blank', 'noopener,noreferrer');
+        const newWindow = window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
         if (!newWindow) {
-          window.location.href = spotifyWebUrl;
+          window.location.href = spotifyUrl;
         }
       }
     }, REVEAL_DURATION_MS);
