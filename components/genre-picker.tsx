@@ -133,12 +133,12 @@ export function GenrePicker() {
       const spotifyUrl = `https://open.spotify.com/genre/${encodeURIComponent(genre.id)}`;
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       if (isIOS) {
-        window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
-      } else {
         const newWindow = window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
         if (!newWindow) {
           window.location.href = spotifyUrl;
         }
+      } else {
+        window.open(spotifyUrl, '_blank', 'noopener,noreferrer');
       }
     }, REVEAL_DURATION_MS);
   };
