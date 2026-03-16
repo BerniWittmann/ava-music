@@ -5,13 +5,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev      # Start dev server (port 3000)
-npm run build    # Build for production (static export to ./out)
-npm run lint     # Run ESLint
-npm run start    # Start production server (not useful with static export)
+npm run dev          # Start dev server (port 3000)
+npm run build        # Build for production (static export to ./out)
+npm run lint         # Run ESLint
+npm run start        # Start production server (not useful with static export)
+npm run test:e2e     # Run Playwright e2e tests (auto-starts dev server)
+npm run test:e2e:ui  # Run Playwright e2e tests with interactive UI
 ```
-
-No test runner is configured.
 
 ## Architecture
 
@@ -35,6 +35,9 @@ public/
   ava-logo.png        — Avalanches logo displayed in UI
   bg-texture.jpg      — background texture image
   icons/              — PWA icons (192px and 512px)
+e2e/
+  genre-picker.spec.ts — Playwright e2e tests for the genre picker UI
+playwright.config.ts  — Playwright config (Chromium only, auto-starts dev server)
 .github/workflows/
   deploy.yml          — GitHub Pages deployment workflow
 ```
@@ -84,6 +87,32 @@ public/
 - Pre-cached on install: `./`, `./ava-logo.png`, `./bg-texture.jpg`
 - Old caches purged on activate
 
+## E2E Testing
+
+Playwright tests live in `e2e/genre-picker.spec.ts` and run against Chromium only.
+
+- `npm run test:e2e` — runs all tests; automatically starts `npm run dev` on port 3000 if not already running
+- `npm run test:e2e:ui` — opens the Playwright interactive UI for debugging
+
+**Test coverage** (`e2e/genre-picker.spec.ts`):
+- Heading, description, and logo visibility
+- Pick button enabled by default
+- Settings panel open/close via gear icon
+- Genre count display (default 12/58 selected)
+- Deselect all → pick button disabled
+- Select all → pick button re-enabled
+- Individual genre checkbox toggle
+- Reveal overlay shown after picking
+- "Last pick:" label visible after animation completes (~1500ms)
+- Button text changes to "Try another genre" after first pick
+- Spotify URL format validated via `window.open` spy
+- Multiple picks in sequence
+
+**Notes**:
+- Tests override `window.open` to prevent actual Spotify redirects
+- CI config: `forbidOnly`, 2 retries, 1 worker (`playwright.config.ts`)
+- Install browsers once with: `npx playwright install`
+
 ## Deployment
 
 GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and deploys to GitHub Pages. `PAGES_BASE_PATH` must be set to the repository subdirectory path (e.g., `/ava-music`) when deploying to a non-root GitHub Pages URL.
@@ -93,3 +122,6 @@ GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and deploys to G
 - `next` ^15, `react` ^18, `react-dom` ^18
 - `tailwindcss` ^3, `typescript` ^5
 - No additional runtime dependencies
+
+**Dev dependencies** (testing):
+- `@playwright/test` ^1.56
