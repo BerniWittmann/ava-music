@@ -95,6 +95,22 @@ test.describe('Genre Picker', () => {
     await expect(page.getByRole('button', { name: 'Try another genre' })).toBeEnabled();
   });
 
+  test('opens a Spotify genre URL via window.open', async ({ page }) => {
+    await page.evaluate(() => {
+      (window as any).__openCalls = [];
+      window.open = (url?: string | URL | null) => {
+        (window as any).__openCalls.push(String(url));
+        return window;
+      };
+    });
+
+    await page.getByRole('button', { name: 'Pick random Spotify genre' }).click();
+    await page.waitForTimeout(2000);
+
+    const openedUrl = await page.evaluate(() => (window as any).__openCalls[0]);
+    expect(openedUrl).toMatch(/^https:\/\/open\.spotify\.com\/genre\//);
+  });
+
   test('can pick multiple genres in sequence', async ({ page }) => {
     await page.evaluate(() => { window.open = () => window; });
 
