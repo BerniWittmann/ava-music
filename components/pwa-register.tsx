@@ -6,8 +6,9 @@ export function PWARegister() {
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return;
 
+    const hadController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      window.location.reload();
+      if (hadController) window.location.reload();
     });
 
     const register = () => {
