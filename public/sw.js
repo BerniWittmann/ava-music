@@ -1,4 +1,5 @@
-const CACHE_NAME = 'ava-genre-picker-v1';
+const CACHE_VERSION = 'dev';
+const CACHE_NAME = `ava-genre-picker-${CACHE_VERSION}`;
 const ASSETS_TO_CACHE = [
   './',
   './ava-logo.png',
@@ -15,7 +16,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+      Promise.all(keys.filter((key) => !key.startsWith('ava-genre-picker-') || key !== CACHE_NAME).map((key) => caches.delete(key)))
     )
   );
   self.clients.claim();
